@@ -1,0 +1,21 @@
+export enum RESPONSE_STATUS {
+  SUCCESS = 'success',
+  ERROR = 'error',
+}
+
+export enum ERROR_CODE {
+  INTERNAL_SERVER_ERROR = 'INTERNAL_SERVER_ERROR',
+  NOT_FOUND = 'NOT_FOUND',
+  DUPLICATE_KEY = 'DUPLICATE_KEY',
+  INVALID_ID = 'INVALID_ID',
+  VALIDATION_ERROR = 'VALIDATION_ERROR'
+}
+
+export enum RESPONSE_ERROR_MESSAGE {
+  INTERNAL_SERVER_ERROR = 'Something went wrong. Please try again later or contact support.',
+  NOT_FOUND = 'not found',
+  DUPLICATE_KEY = 'DUPLICATE_KEY',
+  INVALID_ID = 'INVALID_ID',
+  VALIDATION_ERROR = 'VALIDATION_ERROR'
+}
+
