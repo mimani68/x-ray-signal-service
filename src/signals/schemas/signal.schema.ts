@@ -1,13 +1,16 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, Schema } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
 @Schema({ timestamps: true })
 export class Signal extends Document {
-    @Prop({ required: true })
-    content: string;
 
-    @Prop({ default: Date.now })
-    timestamp: Date;
+  @Prop({ required: true })
+  deviceId: string;
+
+  @Prop({ type: [[Number, [Number, Number, Number]]], required: true })
+  data: Array<[number, [number, number, number]]>;
+
+  @Prop({ required: true })
+  time: number;
+  
 }
-
-export const SignalSchema = SchemaFactory.createForClass(Signal);

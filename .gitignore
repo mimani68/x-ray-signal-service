@@ -45,3 +45,6 @@ statics/*
 
 *.swp
 *.swo
+
+.curser
+.continue
