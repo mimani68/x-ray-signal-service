@@ -7,11 +7,14 @@ import { MessageBrokerConsumerException, MissingContentException } from 'src/com
 import { RabbitMQService } from 'src/common/services/rabbitmq.service';
 import { getRabbitMQConfig } from 'src/configs/rabbitmq.config';
 import { Signal } from 'src/signals/schemas/signal.schema';
+import { RabbitMQBroker } from '../class/rabbitmq.class';
+import { SignalMessageHandler } from '../class/signal_message.class';
 
 @Injectable()
 export class SignalConsumer implements OnModuleInit {
 
   private config: any;
+  private INITIAL_DELAY: number;
 
   constructor(
     private readonly configService: ConfigService,
@@ -19,49 +22,19 @@ export class SignalConsumer implements OnModuleInit {
     @InjectModel(Signal.name) private signalModel: Model<Signal>
   ) {
     this.config = getRabbitMQConfig(this.configService)
+    this.INITIAL_DELAY = 5000
   }
 
   async onModuleInit() {
     setTimeout(async () => {
       const channel = this.rabbitMQService.getChannel();
-
-      await channel.consume(
-        this.config.queue.signal,
-        async (msg) => {
-          console.log(msg)
-          if (!msg) {
-            console.error('Received empty message from queue');
-            return;
-          }
-
-          try {
-            let content = JSON.parse(msg.content.toString());
-
-            if (!content && Object.keys(content).length <= 0) {
-              throw new MissingContentException();
-            }
-
-            const deviceId = Object.keys(content)[0]
-            const signal = new this.signalModel({
-              deviceId: deviceId,
-              data: content[deviceId].data,
-              time: content[deviceId].time
-            });
-            await signal.save();
-            channel.ack(msg);
-            console.log(`Successfully processed signal, DeviceID=${ deviceId }`);
-          } catch (error) {
-            console.error(`Error processing message`, {
-              error: error.message,
-              stack: error.stack,
-              timestamp: new Date().toISOString()
-            });
-            channel.nack(msg, false, false);
-            throw new MessageBrokerConsumerException()
-          }
-        }
+      const rabbitMQBroker = new RabbitMQBroker(channel);
+      const signalHandler = new SignalMessageHandler(
+        this.signalModel,
+        this.config.queue.signal
       );
-    }, 5000)
-
+      await rabbitMQBroker.consume(this.config.queue.signal, signalHandler);
+    }, this.INITIAL_DELAY )
   }
+
 }
