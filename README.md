@@ -60,6 +60,7 @@ This endpoint is handled by the `SignalsController` in `src/signals/controllers/
 - `start:dev`: Run in development mode.
 - `build`: Compile TypeScript to JavaScript.
 - `lint`: Run ESLint for code linting.
+- `mock:producer`: Running fake signal producer
 
 ## Architecture
 

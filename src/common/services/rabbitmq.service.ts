@@ -35,7 +35,7 @@ export class RabbitMQService implements OnModuleInit {
             await this.channel.bindQueue(
                 this.config.queue.signal,
                 this.config.exchange.signal,
-                this.config.routingKey
+                this.config.routingKey.signal
             );
         } catch (error) {
             console.error('RabbitMQ connection error', error);

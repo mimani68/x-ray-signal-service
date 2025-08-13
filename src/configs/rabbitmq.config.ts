@@ -6,6 +6,9 @@ export const getRabbitMQConfig = (configService: ConfigService) => ({
     signal: configService.get<string>('AMQP_EXCHANGE', 'development.signal.alert.trigger'),
   },
   queue: {
-    signal: configService.get<string>('AMQP_ROUTING_KEY', 'development.signal.alert.trigger'),
+    signal: configService.get<string>('AMQP_QUEUE', 'development.signal.alert.trigger'),
+  },
+  routingKey: {
+    signal: configService.get<string>('AMQP_ROUTING_KEY', 'signal-data'),
   }
 });
