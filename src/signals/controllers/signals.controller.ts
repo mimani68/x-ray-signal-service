@@ -2,8 +2,7 @@ import { Controller, Get, Query, DefaultValuePipe, ParseIntPipe } from '@nestjs/
 import { ApiTags, ApiQuery } from '@nestjs/swagger';
 
 import { SignalsService } from '../services/signals.service';
-import { SignalEntity } from '../entities/signal';
-import { SortParams } from '../dto/sort';
+import { Signal } from '../schemas/signal.schema';
 
 @ApiTags('signals')
 @Controller('signals')
@@ -11,43 +10,18 @@ export class SignalsController {
     constructor(private readonly signalsService: SignalsService) { }
 
     @Get()
-    @ApiQuery({ name: 'title', required: false, type: String, description: 'Filter by job title' })
-    @ApiQuery({ name: 'location', required: false, type: String, description: 'Filter by location' })
-    @ApiQuery({ name: 'minSalary', required: false, type: Number, description: 'Filter by minimum salary' })
-    @ApiQuery({ name: 'maxSalary', required: false, type: Number, description: 'Filter by maximum salary' })
     @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number', example: 1 })
     @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Items per page', example: 10 })
-    @ApiQuery({
-        name: 'sortBy',
-        required: false,
-        enum: ['title', 'companyName', 'location', 'postedDate', 'salaryRange.min', 'salaryRange.max'],
-        description: 'Field to sort by'
-    })
-    @ApiQuery({
-        name: 'sortDirection',
-        required: false,
-        enum: ['ASC', 'DESC'],
-        description: 'Sort direction (ASC or DESC)',
-        example: 'DESC'
-    })
+    @ApiQuery({ name: 'deviceId', required: false, type: String, description: 'Device ID filter' })
+    @ApiQuery({ name: 'startTime', required: false, type: Number, description: 'Start time filter (timestamp)' })
+    @ApiQuery({ name: 'endTime', required: false, type: Number, description: 'End time filter (timestamp)' })
     async getSignals(
-        @Query('title') title?: string,
-        @Query('location') location?: string,
-        @Query('minSalary') minSalary?: number,
-        @Query('maxSalary') maxSalary?: number,
         @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
         @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number = 10,
-        @Query() sortParams?: SortParams,
-    ): Promise<{ data: SignalEntity[]; total: number; page: number; limit: number }> {
-        return this.signalsService.getSignals(
-            title,
-            location,
-            minSalary,
-            maxSalary,
-            page,
-            limit,
-            sortParams?.sortBy,
-            sortParams?.sortDirection
-        );
+        @Query('deviceId') deviceId?: string,
+        @Query('startTime', ParseIntPipe) startTime?: number,
+        @Query('endTime', ParseIntPipe) endTime?: number,
+    ): Promise<{ data: Signal[]; total: number; page: number; limit: number }> {
+        return this.signalsService.getSignals(deviceId, startTime, endTime, page, limit);
     }
 }

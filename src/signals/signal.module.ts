@@ -6,6 +6,7 @@ import { SignalsService } from './services/signals.service';
 import { SignalRepository } from './repositories/signal.repository';
 import { SignalConsumer } from './consumers/signal.consumer';
 import { Signal, SignalSchema } from './schemas/signal.schema';
+import { RabbitMQService } from 'src/common/services/rabbitmq.service';
 
 @Module({
     imports: [
@@ -13,6 +14,6 @@ import { Signal, SignalSchema } from './schemas/signal.schema';
         { name: Signal.name, schema: SignalSchema }
     ])],
     controllers: [SignalsController],
-    providers: [SignalsService, SignalConsumer, SignalRepository],
+    providers: [SignalsService, SignalConsumer, SignalRepository, RabbitMQService],
 })
 export class SignalsModule { }

@@ -1,33 +1,41 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import * as amqp from 'amqplib';
 
-import { rabbitMQConfig } from '../../configs/rabbitmq.config';
+import { getRabbitMQConfig } from '../../configs/rabbitmq.config';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class RabbitMQService implements OnModuleInit {
     private connection: amqp.ChannelModel;
     private channel: amqp.Channel;
+    private config: any
+
+    constructor(
+        private readonly configService: ConfigService,
+    ) {
+        this.config = getRabbitMQConfig(this.configService)
+    }
 
     async onModuleInit() {
         try {
-            this.connection = await amqp.connect(rabbitMQConfig.uri);
+            this.connection = await amqp.connect(this.config.uri);
             this.channel = await this.connection.createChannel();
 
             await this.channel.assertExchange(
-                rabbitMQConfig.exchange.signal,
+                this.config.exchange.signal,
                 'topic',
                 { durable: true }
             );
 
             await this.channel.assertQueue(
-                rabbitMQConfig.queue.signal,
+                this.config.queue.signal,
                 { durable: true }
             );
 
             await this.channel.bindQueue(
-                rabbitMQConfig.queue.signal,
-                rabbitMQConfig.exchange.signal,
-                rabbitMQConfig.routingKey
+                this.config.queue.signal,
+                this.config.exchange.signal,
+                this.config.routingKey
             );
         } catch (error) {
             console.error('RabbitMQ connection error', error);
