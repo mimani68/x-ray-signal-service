@@ -1,23 +1,30 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import { RabbitMQService } from 'src/common/services/rabbitmq.service';
-import { rabbitMQConfig } from 'src/configs/rabbitmq.config';
+import { getRabbitMQConfig } from 'src/configs/rabbitmq.config';
 import { Signal } from 'src/signals/schemas/signal.schema';
 
 @Injectable()
 export class SignalConsumer implements OnModuleInit {
+
+  private config: any;
+
   constructor(
+    private readonly configService: ConfigService,
     private readonly rabbitMQService: RabbitMQService,
     @InjectModel(Signal.name) private signalModel: Model<Signal>
-  ) {}
+  ) {
+    this.config = getRabbitMQConfig(this.configService)
+  }
 
   async onModuleInit() {
     const channel = this.rabbitMQService.getChannel();
     
     await channel.consume(
-      rabbitMQConfig.queue.signal, 
+      this.config.queue.signal, 
       async (msg) => {
         if (!msg) {
           console.error('Received empty message from queue');
