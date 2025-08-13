@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { ERROR_CODE } from 'src/common/consts/messages.const';
 import { HttpException } from '@nestjs/common/exceptions/http.exception';
+import { suppressTracing } from '@sentry/nestjs';
 
 export class HttpPaymentRequiredException extends HttpException {
   constructor(message?: string, name?: string) {
@@ -85,5 +86,19 @@ export class HttpForbiddenException extends ForbiddenException {
   constructor(message?: string, name?: string) {
     super(message);
     this.name = name || this.name;
+  }
+}
+
+export class MissingContentException extends Error {
+  constructor(message?: string) {
+    super();
+    this.message = message || 'Message content is missing required data'
+  }
+}
+
+export class MessageBrokerConsumerException extends Error {
+  constructor(message?: string) {
+    super(message);
+    this.message = message || 'Error processing message'
   }
 }

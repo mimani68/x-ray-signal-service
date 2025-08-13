@@ -2,6 +2,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { MessageBrokerConsumerException, MissingContentException } from 'src/common/errors';
 
 import { RabbitMQService } from 'src/common/services/rabbitmq.service';
 import { getRabbitMQConfig } from 'src/configs/rabbitmq.config';
@@ -36,28 +37,27 @@ export class SignalConsumer implements OnModuleInit {
           try {
             let content = JSON.parse(msg.content.toString());
 
-            if (!content.message && Object.keys(content.message).length <= 0) {
-              throw new Error('Message content is missing required "message" field');
+            if (!content && Object.keys(content).length <= 0) {
+              throw new MissingContentException();
             }
 
-            const deviceId = Object.keys(content.message)[0]
+            const deviceId = Object.keys(content)[0]
             const signal = new this.signalModel({
               deviceId: deviceId,
-              data: content.message[deviceId].data,
-              time: content.message[deviceId].time
+              data: content[deviceId].data,
+              time: content[deviceId].time
             });
             await signal.save();
             channel.ack(msg);
-            console.log(`Successfully processed signal: ${content.message.substring(0, 50)}...`);
+            console.log(`Successfully processed signal, DeviceID=${ deviceId }`);
           } catch (error) {
-            console.error(`Error processing message [${msg.content.toString().substring(0, 100)}...]`, {
+            console.error(`Error processing message`, {
               error: error.message,
               stack: error.stack,
               timestamp: new Date().toISOString()
             });
-
-            // Reject message without requeue to avoid infinite loops
             channel.nack(msg, false, false);
+            throw new MessageBrokerConsumerException()
           }
         }
       );

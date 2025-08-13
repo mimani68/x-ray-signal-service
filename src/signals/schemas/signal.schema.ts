@@ -4,10 +4,10 @@ import { Document } from 'mongoose';
 @Schema({ timestamps: true })
 export class Signal extends Document {
 
-  @Prop({ required: true })
+  @Prop({ index: true, required: true })
   deviceId: string;
 
-  @Prop({ type: [[Number, [Number, Number, Number]]], required: true })
+  @Prop({ required: true })
   data: Array<[number, [number, number, number]]>;
 
   @Prop({ required: true })

@@ -6,7 +6,7 @@ dotenv.config();
 
 interface Signal {
   [key: string]: {
-    data: any;
+    data: Array<[number, [number, number, number]]>;
     time: number;
   };
 }
