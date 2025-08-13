@@ -19,8 +19,8 @@ export class SignalsController {
         @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
         @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number = 10,
         @Query('deviceId') deviceId?: string,
-        @Query('startTime', ParseIntPipe) startTime?: number,
-        @Query('endTime', ParseIntPipe) endTime?: number,
+        @Query('startTime') startTime?: number,
+        @Query('endTime') endTime?: number,
     ): Promise<{ data: Signal[]; total: number; page: number; limit: number }> {
         return this.signalsService.getSignals(deviceId, startTime, endTime, page, limit);
     }

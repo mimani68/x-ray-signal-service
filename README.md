@@ -41,6 +41,7 @@ Fetches a paginated list of signals with optional filtering by device ID and tim
 
 This endpoint is handled by the `SignalsController` in `src/signals/controllers/signals.controller.ts`.
 
+![](./docs/swagger.png)
 
 ## Development
 
