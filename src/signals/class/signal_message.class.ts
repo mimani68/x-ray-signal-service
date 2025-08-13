@@ -2,11 +2,9 @@ import { MessageHandler } from "../interfaces/message_handler.interface";
 
 export class SignalMessageHandler implements MessageHandler {
   private signalModel: any;
-  private queueName: string;
 
-  constructor(signalModel: any, queueName: string) {
+  constructor(signalModel: any) {
     this.signalModel = signalModel;
-    this.queueName = queueName;
   }
 
   async handleMessage(msg: any): Promise<void> {
