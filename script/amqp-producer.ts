@@ -62,7 +62,7 @@ async function produceSignal() {
     channel.publish(exchange, routingKey, message, { persistent: true });
 
     console.log(`Sent message to exchange '${exchange}' with routing key '${routingKey}':`);
-    console.log(JSON.stringify(signal, null, 2));
+    // console.log(JSON.stringify(signal, null, 2));
 
     // Close the connection
     await channel.close();

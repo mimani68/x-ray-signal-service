@@ -14,19 +14,19 @@ export class RabbitMQService implements OnModuleInit {
             this.channel = await this.connection.createChannel();
 
             await this.channel.assertExchange(
-                rabbitMQConfig.exchange,
+                rabbitMQConfig.exchange.signal,
                 'topic',
                 { durable: true }
             );
 
             await this.channel.assertQueue(
-                rabbitMQConfig.queue,
+                rabbitMQConfig.queue.signal,
                 { durable: true }
             );
 
             await this.channel.bindQueue(
-                rabbitMQConfig.queue,
-                rabbitMQConfig.exchange,
+                rabbitMQConfig.queue.signal,
+                rabbitMQConfig.exchange.signal,
                 rabbitMQConfig.routingKey
             );
         } catch (error) {

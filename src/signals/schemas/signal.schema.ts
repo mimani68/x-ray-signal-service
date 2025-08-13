@@ -1,4 +1,4 @@
-import { Prop, Schema } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
 @Schema({ timestamps: true })
@@ -14,3 +14,6 @@ export class Signal extends Document {
   time: number;
   
 }
+
+export const SignalSchema = SchemaFactory.createForClass(Signal);
+

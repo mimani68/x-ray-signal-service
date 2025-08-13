@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SentryModule } from "@sentry/nestjs/setup";
 import { APP_FILTER } from "@nestjs/core";
 import { SentryGlobalFilter } from "@sentry/nestjs/setup";
+import { MongooseModule } from '@nestjs/mongoose';
 
 import { SignalsModule } from './signals/signal.module';
+import { mongodbConfig } from './configs/db.config';
 
 @Module({
   imports: [
@@ -12,6 +14,11 @@ import { SignalsModule } from './signals/signal.module';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
+    }),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: mongodbConfig,
+      inject: [ConfigService],
     }),
     SignalsModule,
   ],
@@ -23,4 +30,4 @@ import { SignalsModule } from './signals/signal.module';
     }
   ],
 })
-export class AppModule {}
+export class AppModule { }
